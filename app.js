@@ -5,6 +5,8 @@ import queryRouter from "./src/controllers/queries.js";
 import cors from "cors";
 
 const app = express();
+app.use(express.json());
+app.use(cors());
 const url = process.env.MONGO_URL;
 
 mongoose
@@ -13,9 +15,6 @@ mongoose
   .catch((error) => {
     console.log("Error connectiong to mongoDB.", error.message);
   });
-
-app.use(express.json());
-app.use(cors());
 
 app.get("/", (req, res) => {
   res.json({

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const userRouter = Router();
 
@@ -28,9 +29,23 @@ userRouter.post("/register", async (req, res) => {
     password: passwordHash,
   });
 
-  const savedUser = await newUser.save();
-  console.log(savedUser);
-  res.status(201).json(savedUser);
+  const { username } = await newUser.save();
+  const token = jwt.sign(username, process.env.SECRET);
+  res.status(200).send({ username, token });
+});
+
+userRouter.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await User.findOne({ username });
+  const passwordCorrect =
+    user === null ? false : await bcrypt.compare(password, user.password);
+  if (!(user && passwordCorrect)) {
+    return response.status(401).json({
+      error: "Invalid username or password.",
+    });
+  }
+  const token = jwt.sign(username, process.env.SECRET);
+  res.status(200).send({ username, token });
 });
 
 export default userRouter;
