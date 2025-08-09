@@ -59,7 +59,6 @@ queryRouter.post("/", async (req, res) => {
 queryRouter.delete("/:id", async (req, res) => {
   const token = jwt.verify(getAuthToken(req), process.env.SECRET);
   console.log(token);
-  //const user = await User.findOne({token.username})
   const id = req.params.id;
   const query = await Query.findOne({ id }).populate("user", "username");
   console.log(query);
