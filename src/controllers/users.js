@@ -31,7 +31,7 @@ userRouter.post("/register", async (req, res) => {
 
   const { username } = await newUser.save();
   const token = jwt.sign(username, process.env.SECRET);
-  res.status(200).send({ username, token });
+  res.status(201).send({ username, token });
 });
 
 userRouter.post("/login", async (req, res) => {
@@ -40,7 +40,7 @@ userRouter.post("/login", async (req, res) => {
   const passwordCorrect =
     user === null ? false : await bcrypt.compare(password, user.password);
   if (!(user && passwordCorrect)) {
-    return response.status(401).json({
+    return res.status(401).json({
       error: "Invalid username or password.",
     });
   }

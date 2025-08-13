@@ -19,23 +19,22 @@ queryRouter.get("/", async (req, res) => {
   res.json(queries);
 });
 
+queryRouter.get("/:username/queries", async (req, res) => {
+  const user = await User.findOne({ username: req.params.username }).populate(
+    "queries"
+  );
+  if (user) {
+    res.json(user.queries);
+  } else {
+    res.status(404).end();
+  }
+});
+
 queryRouter.post("/", async (req, res) => {
   const body = req.body;
   console.log(body);
 
   const user = await User.findOne({ username: body.username });
-  /* 
-  {
-    "username": "test",
-    "id": "123",
-    "url": "google.com",
-    "method": "GET",
-    "query": {
-      "param1": "delete",
-      "param2": "me"
-    }
-  }
- */
 
   const query = new Query({
     id: body.id,
