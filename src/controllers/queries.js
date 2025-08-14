@@ -57,15 +57,15 @@ queryRouter.post("/", async (req, res) => {
 
 queryRouter.delete("/:id", async (req, res) => {
   const token = jwt.verify(getAuthToken(req), process.env.SECRET);
-  console.log(token);
   const id = req.params.id;
   const query = await Query.findOne({ id }).populate("user", "username");
-  console.log(query);
-  try {
-    Query.deleteOne({ id });
-    res.status(204).end();
-  } catch (e) {
-    res.status(500).send("Server error.");
+  if (query.user.username === token) {
+    try {
+      await Query.deleteOne({ id });
+      res.status(204).end();
+    } catch (e) {
+      res.status(500).send("Server error.");
+    }
   }
 });
 
