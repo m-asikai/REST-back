@@ -48,10 +48,9 @@ queryRouter.post("/", async (req, res) => {
   if (savedQuery) {
     user.queries = user.queries.concat(savedQuery._id);
     await user.save();
-    console.log(savedQuery);
     res.status(201).json(savedQuery);
   } else {
-    res.status(418).end(); // TODO: proper error handling
+    res.status(500).send({ error: "Error saving the query." });
   }
 });
 

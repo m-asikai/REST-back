@@ -23,15 +23,21 @@ userRouter.get("/:username/queries", async (req, res) => {
 
 userRouter.post("/register", async (req, res) => {
   const salt = 10;
-  const passwordHash = await bcrypt.hash(req.body.password, salt);
-  const newUser = new User({
-    username: req.body.username,
-    password: passwordHash,
-  });
+  try {
+    const passwordHash = await bcrypt.hash(req.body.password, salt);
+    const newUser = new User({
+      username: req.body.username,
+      password: passwordHash,
+    });
 
-  const { username } = await newUser.save();
-  const token = jwt.sign(username, process.env.SECRET);
-  res.status(201).send({ username, token });
+    const { username } = await newUser.save();
+    const token = jwt.sign(username, process.env.SECRET);
+    res.status(201).send({ username, token });
+  } catch (e) {
+    if (e.code === 11000) {
+      res.status(400).send({ error: "Username already in use." });
+    }
+  }
 });
 
 userRouter.post("/login", async (req, res) => {
@@ -41,7 +47,7 @@ userRouter.post("/login", async (req, res) => {
     user === null ? false : await bcrypt.compare(password, user.password);
   if (!(user && passwordCorrect)) {
     return res.status(401).json({
-      error: "Invalid username or password.",
+      error: "Incorrect username or password.",
     });
   }
   const token = jwt.sign(username, process.env.SECRET);
