@@ -19,14 +19,18 @@ queryRouter.get("/", async (req, res) => {
   res.json(queries);
 });
 
-queryRouter.get("/:username/queries", async (req, res) => {
-  const user = await User.findOne({ username: req.params.username }).populate(
-    "queries"
-  );
-  if (user) {
-    res.json(user.queries);
-  } else {
-    res.status(404).end();
+queryRouter.get("/user-queries", async (req, res) => {
+  try {
+    const token = getAuthToken(req);
+    const username = jwt.verify(token, process.env.SECRET);
+    const user = await User.findOne({ username: username }).populate("queries");
+    if (user) {
+      res.json(user.queries);
+    } else {
+      res.status(404).end();
+    }
+  } catch (e) {
+    res.status(401).end();
   }
 });
 
