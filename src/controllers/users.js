@@ -5,11 +5,6 @@ import jwt from "jsonwebtoken";
 
 const userRouter = Router();
 
-userRouter.get("/", async (req, res) => {
-  const users = await User.find({});
-  res.json(users);
-});
-
 userRouter.get("/:username/queries", async (req, res) => {
   const user = await User.findOne({ username: req.params.username }).populate(
     "queries"

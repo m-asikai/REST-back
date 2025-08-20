@@ -16,19 +16,6 @@ mongoose
     console.log("Error connectiong to mongoDB.", error.message);
   });
 
-app.get("/", (req, res) => {
-  res.json({
-    name: "Test",
-    age: 43,
-  });
-});
-
-app.post("/", (req, res) => {
-  const { body } = req;
-  console.log(body);
-  res.status(200).send();
-});
-
 app.use("/api/user", userRouter);
 app.use("/api/query", queryRouter);
 
